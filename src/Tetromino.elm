@@ -23,7 +23,7 @@ getTetrominoMap tetromino =
             TetrominoMap ( 0, 0 ) ( 0, 1 ) ( 1, 0 ) ( 1, 1 )
 
         TTetromino ->
-            TetrominoMap ( 1, 0 ) ( 0, 1 ) ( 1, 1 ) ( 2, 1 )
+            TetrominoMap ( 0, 0 ) ( -1, 1 ) ( 0, 1 ) ( 1, 1 )
 
         JTetromino ->
             TetrominoMap ( 0, 0 ) ( 0, 1 ) ( 1, 1 ) ( 1, 2 )
@@ -35,4 +35,4 @@ getTetrominoMap tetromino =
             TetrominoMap ( 0, 0 ) ( 1, 0 ) ( 1, 1 ) ( 2, 1 )
 
         ZTetromino ->
-            TetrominoMap ( 1, 0 ) ( 2, 0 ) ( 0, 1 ) ( 1, 1 )
+            TetrominoMap ( 0, 0 ) ( 1, 0 ) ( -1, 1 ) ( 0, 1 )
