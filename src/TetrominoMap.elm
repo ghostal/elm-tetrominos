@@ -1,4 +1,4 @@
-module TetrominoMap exposing (TetrominoMap)
+module TetrominoMap exposing (TetrominoMap, getRotationOptions)
 
 
 type alias TetrominoMap =
@@ -13,10 +13,29 @@ type alias Coordinate =
     ( Int, Int )
 
 
-getRotationOptions : TetrominoMap -> List TetrominoMap
-getRotationOptions map =
-    -- TODO: Implement properly
-    [ map ]
+getRotationOptions : TetrominoMap -> List TetrominoMap -> List TetrominoMap
+getRotationOptions map discoveredRotations =
+    let
+        rotated =
+            rotate map
+    in
+    case List.member rotated discoveredRotations of
+        True ->
+            discoveredRotations
+
+        False ->
+            getRotationOptions rotated (List.append discoveredRotations [ rotated ])
+
+
+rotate : TetrominoMap -> TetrominoMap
+rotate map =
+    normalize
+        (TetrominoMap
+            ( Tuple.second map.a, negate (Tuple.first map.a) )
+            ( Tuple.second map.b, negate (Tuple.first map.b) )
+            ( Tuple.second map.c, negate (Tuple.first map.c) )
+            ( Tuple.second map.d, negate (Tuple.first map.d) )
+        )
 
 
 normalize : TetrominoMap -> TetrominoMap
