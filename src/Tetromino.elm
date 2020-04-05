@@ -1,4 +1,4 @@
-module Tetromino exposing (Tetromino)
+module Tetromino exposing (Tetromino(..), getTetrominoMap)
 
 import TetrominoMap exposing (TetrominoMap)
 

@@ -1,12 +1,15 @@
 module Tetrominos exposing (main)
 
 import Browser
+import Debug
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Tetromino exposing (Tetromino(..))
+import TetrominoMap exposing (..)
 
 
 type alias Model =
-    Int
+    List TetrominoMap
 
 
 type Msg
@@ -15,7 +18,7 @@ type Msg
 
 initialModel : Model
 initialModel =
-    1
+    Debug.log "maps" (getRotationOptions (Tetromino.getTetrominoMap TTetromino) [])
 
 
 view : Model -> Html Msg
