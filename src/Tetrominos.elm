@@ -9,7 +9,20 @@ import TetrominoMap exposing (..)
 
 
 type alias Model =
-    List TetrominoMap
+    { tileQuantities : Maybe TileBag
+    , possibleBoards : Maybe (List ( Int, Int ))
+    }
+
+
+type alias TileBag =
+    { o : Int
+    , i : Int
+    , s : Int
+    , z : Int
+    , t : Int
+    , j : Int
+    , l : Int
+    }
 
 
 type Msg
@@ -18,7 +31,44 @@ type Msg
 
 initialModel : Model
 initialModel =
-    Debug.log "maps" (getRotationOptions (Tetromino.getTetrominoMap TTetromino) [])
+    let
+        bag =
+            { o = 7
+            , i = 7
+            , s = 7
+            , z = 7
+            , t = 7
+            , j = 7
+            , l = 7
+            }
+    in
+    Debug.log "tile bag"
+        { tileQuantities =
+            Just
+                bag
+        , possibleBoards = Just (calculatePossibleBoards bag)
+        }
+
+
+calculatePossibleBoards : TileBag -> List ( Int, Int )
+calculatePossibleBoards bag =
+    let
+        area =
+            4 * List.foldl (+) 0 [ bag.o, bag.i, bag.s, bag.z, bag.t, bag.j, bag.l ]
+    in
+    List.foldl
+        (\candidate acc ->
+            if area // candidate >= candidate && modBy candidate area == 0 then
+                ( candidate, area // candidate ) :: acc
+
+            else
+                acc
+        )
+        []
+        (List.range
+            1
+            (area // 2)
+        )
 
 
 view : Model -> Html Msg
