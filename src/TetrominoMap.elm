@@ -61,24 +61,39 @@ normalizeRootSquare map =
 
 normalizeSquareOrder : TetrominoMap -> TetrominoMap
 normalizeSquareOrder map =
-    let
-        coords =
-            List.sortWith
-                (\a b ->
-                    case compare (Tuple.first a) (Tuple.first b) of
+    case compareCoordinates map.a map.b of
+        GT ->
+            normalizeSquareOrder (TetrominoMap map.b map.a map.c map.d)
+
+        _ ->
+            case compareCoordinates map.b map.c of
+                GT ->
+                    normalizeSquareOrder (TetrominoMap map.a map.c map.b map.d)
+
+                _ ->
+                    case compareCoordinates map.c map.d of
                         GT ->
-                            GT
+                            normalizeSquareOrder (TetrominoMap map.a map.b map.d map.c)
 
-                        LT ->
-                            LT
+                        _ ->
+                            map
 
-                        EQ ->
-                            compare (Tuple.second a) (Tuple.second b)
-                )
-                [ map.a, map.b, map.c, map.d ]
+
+compareCoordinates : Coordinate -> Coordinate -> Order
+compareCoordinates a b =
+    let
+        rowComparison =
+            compare (Tuple.second a) (Tuple.second b)
+
+        colComparison =
+            compare (Tuple.first a) (Tuple.first b)
     in
-    -- TODO: Fold the sorted coords together into the constructor somehow...
-    map
+    case rowComparison of
+        EQ ->
+            colComparison
+
+        _ ->
+            rowComparison
 
 
 translate : Coordinate -> TetrominoMap -> TetrominoMap
