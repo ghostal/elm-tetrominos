@@ -40,6 +40,13 @@ rotate map =
 
 normalize : TetrominoMap -> TetrominoMap
 normalize map =
+    map
+        |> normalizeRootSquare
+        |> normalizeSquareOrder
+
+
+normalizeRootSquare : TetrominoMap -> TetrominoMap
+normalizeRootSquare map =
     let
         rootSquare =
             getRootSquare map
@@ -50,6 +57,28 @@ normalize map =
 
         _ ->
             translate ( negate (Tuple.first rootSquare), negate (Tuple.second rootSquare) ) map
+
+
+normalizeSquareOrder : TetrominoMap -> TetrominoMap
+normalizeSquareOrder map =
+    let
+        coords =
+            List.sortWith
+                (\a b ->
+                    case compare (Tuple.first a) (Tuple.first b) of
+                        GT ->
+                            GT
+
+                        LT ->
+                            LT
+
+                        EQ ->
+                            compare (Tuple.second a) (Tuple.second b)
+                )
+                [ map.a, map.b, map.c, map.d ]
+    in
+    -- TODO: Fold the sorted coords together into the constructor somehow...
+    map
 
 
 translate : Coordinate -> TetrominoMap -> TetrominoMap
