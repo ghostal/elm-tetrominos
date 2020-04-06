@@ -1,43 +1,45 @@
 module Tetrominos exposing (main)
 
+import Board exposing (Board)
 import Browser
 import Debug
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onClick, onInput)
 import Tetromino exposing (Tetromino(..))
 import TetrominoBag exposing (TetrominoBag)
 import TetrominoMap exposing (..)
 
 
 type alias Model =
-    { tileQuantities : Maybe TetrominoBag
+    { tileQuantities : TetrominoBag
     , possibleBoards : Maybe (List ( Int, Int ))
     }
 
 
 type Msg
     = Tick
+    | ChangedTetrominoCount Tetromino String
+    | StartClicked
 
 
 initialModel : Model
 initialModel =
     let
         bag =
-            { o = 7
-            , i = 7
-            , s = 7
-            , z = 7
-            , t = 7
-            , j = 7
-            , l = 7
+            { o = 0
+            , i = 0
+            , s = 0
+            , z = 0
+            , t = 0
+            , j = 0
+            , l = 0
             }
     in
-    Debug.log "tile bag"
-        { tileQuantities =
-            Just
-                bag
-        , possibleBoards = Just (calculatePossibleBoards bag)
-        }
+    { tileQuantities =
+        bag
+    , possibleBoards = Nothing
+    }
 
 
 calculatePossibleBoards : TetrominoBag -> List ( Int, Int )
@@ -63,12 +65,75 @@ calculatePossibleBoards bag =
 
 view : Model -> Html Msg
 view model =
-    div [] []
+    case model.possibleBoards of
+        Nothing ->
+            viewInitializationSettings model
+
+        Just possibleBoards ->
+            viewPossibleBoards model possibleBoards
+
+
+viewInitializationSettings : Model -> Html Msg
+viewInitializationSettings model =
+    div []
+        [ table []
+            (List.map
+                (\constructor ->
+                    tr []
+                        [ td [] [ text (Tetromino.getTetrominoName constructor) ]
+                        , td []
+                            [ input [ onInput (ChangedTetrominoCount constructor), value (String.fromInt (TetrominoBag.getTetrominoQuantity constructor model.tileQuantities)) ] []
+                            ]
+                        ]
+                )
+                Tetromino.allTetrominoes
+            )
+        , button [ onClick StartClicked ] [ text "Solve!" ]
+        ]
+
+
+viewPossibleBoards : Model -> List ( Int, Int ) -> Html Msg
+viewPossibleBoards model boards =
+    div []
+        (List.map
+            (\board ->
+                div []
+                    [ text
+                        (String.fromInt (Tuple.first board)
+                            ++ " x "
+                            ++ String.fromInt (Tuple.second board)
+                        )
+                    ]
+            )
+            boards
+        )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update _ model =
-    ( model, Cmd.none )
+update msg model =
+    case msg of
+        ChangedTetrominoCount tetromino value ->
+            ( { model
+                | tileQuantities =
+                    TetrominoBag.updateQuantity
+                        tetromino
+                        (case String.toInt value of
+                            Just int ->
+                                int
+
+                            Nothing ->
+                                0
+                        )
+                        model.tileQuantities
+              }
+            , Cmd.none
+            )
+
+        StartClicked ->
+            ( { model | possibleBoards = Just (calculatePossibleBoards model.tileQuantities) }, Cmd.none )
+
+        Tick ->
+            ( model, Cmd.none )
 
 
 main : Program () Model Msg
