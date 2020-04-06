@@ -5,23 +5,13 @@ import Debug
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Tetromino exposing (Tetromino(..))
+import TetrominoBag exposing (TetrominoBag)
 import TetrominoMap exposing (..)
 
 
 type alias Model =
-    { tileQuantities : Maybe TileBag
+    { tileQuantities : Maybe TetrominoBag
     , possibleBoards : Maybe (List ( Int, Int ))
-    }
-
-
-type alias TileBag =
-    { o : Int
-    , i : Int
-    , s : Int
-    , z : Int
-    , t : Int
-    , j : Int
-    , l : Int
     }
 
 
@@ -50,7 +40,7 @@ initialModel =
         }
 
 
-calculatePossibleBoards : TileBag -> List ( Int, Int )
+calculatePossibleBoards : TetrominoBag -> List ( Int, Int )
 calculatePossibleBoards bag =
     let
         area =
