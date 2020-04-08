@@ -1,6 +1,7 @@
 module TetrominoMap exposing (TetrominoMap, getRotationOptions)
 
 import Coordinate exposing (Coordinate)
+import Tetromino exposing (Tetromino)
 
 
 type alias TetrominoMap =
@@ -11,8 +12,13 @@ type alias TetrominoMap =
     }
 
 
-getRotationOptions : TetrominoMap -> List TetrominoMap -> List TetrominoMap
-getRotationOptions map discoveredRotations =
+getRotationOptions : Tetromino -> List TetrominoMap
+getRotationOptions tetromino =
+    buildRotationOptions (Tetromino.getTetrominoMap tetromino) []
+
+
+buildRotationOptions : TetrominoMap -> List TetrominoMap -> List TetrominoMap
+buildRotationOptions map discoveredRotations =
     let
         rotated =
             rotate map
@@ -22,7 +28,7 @@ getRotationOptions map discoveredRotations =
             discoveredRotations
 
         False ->
-            getRotationOptions rotated (List.append discoveredRotations [ rotated ])
+            buildRotationOptions rotated (List.append discoveredRotations [ rotated ])
 
 
 rotate : TetrominoMap -> TetrominoMap
