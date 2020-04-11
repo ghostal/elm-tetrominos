@@ -1,4 +1,4 @@
-module Tetromino exposing (Tetromino(..), allTetrominoes, getTetrominoMap, getTetrominoName)
+module Tetromino exposing (Tetromino(..), allTetrominoes, getRotationOptions, getTetrominoMap, getTetrominoName)
 
 import TetrominoMap exposing (TetrominoMap)
 
@@ -73,3 +73,8 @@ getTetrominoMap tetromino =
 
         ZTetromino ->
             TetrominoMap ( 1, 0 ) ( 2, 0 ) ( 0, 1 ) ( 1, 1 )
+
+
+getRotationOptions : Tetromino -> List TetrominoMap
+getRotationOptions tetromino =
+    TetrominoMap.buildRotationOptions (getTetrominoMap tetromino) []

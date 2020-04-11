@@ -1,7 +1,6 @@
-module TetrominoMap exposing (TetrominoMap, getRotationOptions)
+module TetrominoMap exposing (TetrominoMap, buildRotationOptions)
 
 import Coordinate exposing (Coordinate)
-import Tetromino exposing (Tetromino)
 
 
 type alias TetrominoMap =
@@ -10,11 +9,6 @@ type alias TetrominoMap =
     , c : Coordinate
     , d : Coordinate
     }
-
-
-getRotationOptions : Tetromino -> List TetrominoMap
-getRotationOptions tetromino =
-    buildRotationOptions (Tetromino.getTetrominoMap tetromino) []
 
 
 buildRotationOptions : TetrominoMap -> List TetrominoMap -> List TetrominoMap
