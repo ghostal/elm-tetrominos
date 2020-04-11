@@ -112,7 +112,7 @@ translate translation map =
 
 getRootSquare : TetrominoMap -> Coordinate
 getRootSquare map =
-    fold chooseLowestThenLeftmostCoordinate map
+    fold Coordinate.chooseLowestThenLeftmostCoordinate map
 
 
 fold : (Coordinate -> Coordinate -> Coordinate) -> TetrominoMap -> Coordinate
@@ -121,25 +121,3 @@ fold func map =
         |> func map.b
         |> func map.c
         |> func map.d
-
-
-chooseLowestThenLeftmostCoordinate : Coordinate -> Coordinate -> Coordinate
-chooseLowestThenLeftmostCoordinate a b =
-    case compare (Tuple.second a) (Tuple.second b) of
-        LT ->
-            a
-
-        GT ->
-            b
-
-        EQ ->
-            case compare (Tuple.first a) (Tuple.first b) of
-                LT ->
-                    a
-
-                GT ->
-                    b
-
-                EQ ->
-                    -- TODO: This is a hack - this should never be reached
-                    a
