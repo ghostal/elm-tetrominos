@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Canvas Drawing Tests</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style type="text/css">
+        canvas {border: 0; padding: 0; margin: 0;}
+        body { margin: 0; }
+    </style>
+</head>
+
+<body>
+<canvas id="canvas"></canvas>
+
+<script>
+var canvas = document.querySelector('canvas');
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+var c = canvas.getContext('2d');
+
+c.strokeStyle = '#333';
+
+c.fillStyle = '#bd93f9';
+c.fillRect(110, 90, 10, 10);
+c.fillRect(100, 100, 10, 10);
+c.fillRect(110, 100, 10, 10);
+c.fillRect(120, 100, 10, 10);
+
+c.beginPath();
+c.moveTo(100, 100);
+c.lineTo(100, 110);
+c.lineTo(110, 110);
+c.lineTo(120, 110);
+c.lineTo(130, 110);
+c.lineTo(130, 100);
+c.lineTo(120, 100);
+c.lineTo(120, 90);
+c.lineTo(110, 90);
+c.lineTo(110, 100);
+c.lineTo(100, 100);
+c.stroke();
+
+//c.fillStyle = '#ad83e9';
+c.fillRect(130, 100, 10, 10);
+c.fillRect(120, 90, 10, 10);
+c.fillRect(130, 90, 10, 10);
+c.fillRect(140, 90, 10, 10);
+
+c.beginPath();
+c.moveTo(130, 100);
+c.lineTo(130, 110);
+c.lineTo(140, 110);
+c.lineTo(140, 100);
+c.lineTo(150, 100);
+c.lineTo(150, 90);
+c.lineTo(140, 90);
+c.lineTo(130, 90);
+c.lineTo(120, 90);
+c.lineTo(120, 100);
+c.lineTo(130, 100);
+c.stroke();
+</script>
+</body>
+</html>
