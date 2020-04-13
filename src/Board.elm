@@ -1,8 +1,10 @@
-module Board exposing (Board, getPlacedTetrominoBag)
+module Board exposing (Board, firstEmptySquare, getPlacedTetrominoBag, isLatestPlacementValid, isSolved)
 
+import Coordinate exposing (Coordinate)
 import Placement exposing (Placement)
 import Tetromino exposing (Tetromino(..))
 import TetrominoBag exposing (TetrominoBag)
+import TetrominoMap
 
 
 type alias Board =
@@ -40,3 +42,54 @@ getPlacedTetrominoBag board =
         )
         (TetrominoBag 0 0 0 0 0 0 0)
         board.placements
+
+
+isSolved : Board -> Bool
+isSolved board =
+    let
+        placedArea =
+            4 * List.length board.placements
+
+        boardArea =
+            board.width * board.height
+    in
+    case List.reverse board.placements of
+        [] ->
+            False
+
+        x :: xs ->
+            case placedArea < boardArea of
+                True ->
+                    False
+
+                False ->
+                    not (Placement.overlaps xs x)
+
+
+isLatestPlacementValid : Board -> Bool
+isLatestPlacementValid board =
+    case List.reverse board.placements of
+        [] ->
+            True
+
+        x :: xs ->
+            Placement.overlaps xs x
+
+
+firstEmptySquare : Board -> Coordinate
+firstEmptySquare board =
+    let
+        placements =
+            List.map (\placement -> placement.placement) board.placements
+
+        coordinates =
+            List.map TetrominoMap.getSquares placements
+                |> List.concat
+    in
+    case coordinates of
+        [] ->
+            ( 0, 0 )
+
+        xs ->
+            -- TODO: Actually find and return a blank coordinate
+            ( 5, 0 )

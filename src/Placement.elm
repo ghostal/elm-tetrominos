@@ -1,4 +1,4 @@
-module Placement exposing (Placement)
+module Placement exposing (Placement, overlaps)
 
 import Coordinate exposing (Coordinate)
 import Tetromino exposing (Tetromino)
@@ -10,3 +10,9 @@ type alias Placement =
     , placement : TetrominoMap -- Map of squares used by this placement
     , tetromino : Tetromino -- The tetromino that's been placed
     }
+
+
+overlaps : List Placement -> Placement -> Bool
+overlaps placements candidate =
+    -- TODO: Implement a real version of this method
+    True

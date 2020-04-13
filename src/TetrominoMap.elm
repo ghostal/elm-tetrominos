@@ -1,4 +1,4 @@
-module TetrominoMap exposing (TetrominoMap, buildRotationOptions)
+module TetrominoMap exposing (TetrominoMap, buildRotationOptions, getSquares, translate)
 
 import Coordinate exposing (Coordinate)
 
@@ -113,6 +113,11 @@ translate translation map =
 getRootSquare : TetrominoMap -> Coordinate
 getRootSquare map =
     fold Coordinate.chooseLowestThenLeftmostCoordinate map
+
+
+getSquares : TetrominoMap -> List Coordinate
+getSquares map =
+    [ map.a, map.b, map.c, map.d ]
 
 
 fold : (Coordinate -> Coordinate -> Coordinate) -> TetrominoMap -> Coordinate
