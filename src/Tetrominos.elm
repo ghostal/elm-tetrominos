@@ -1,26 +1,35 @@
-module Tetrominos exposing (main)
+module Tetrominos exposing (Model, Msg, main)
 
 import Board exposing (Board)
 import Browser
 import Debug
+import Delay
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick, onInput)
+import Solver exposing (Solver)
 import Tetromino exposing (Tetromino(..))
 import TetrominoBag exposing (TetrominoBag)
 import TetrominoMap exposing (..)
 
 
+type ApplicationState
+    = InitialConfiguration
+    | Solving
+
+
 type alias Model =
-    { tileQuantities : TetrominoBag
+    { appState : ApplicationState
+    , tileQuantities : TetrominoBag
     , possibleBoards : Maybe (List ( Int, Int ))
+    , solver : Maybe Solver
     }
 
 
 type Msg
     = Tick
     | ChangedTetrominoCount Tetromino String
-    | StartClicked
+    | SolveClicked
 
 
 initialModel : Model
@@ -36,9 +45,11 @@ initialModel =
             , l = 0
             }
     in
-    { tileQuantities =
+    { appState = InitialConfiguration
+    , tileQuantities =
         bag
     , possibleBoards = Nothing
+    , solver = Nothing
     }
 
 
@@ -46,7 +57,7 @@ calculatePossibleBoards : TetrominoBag -> List ( Int, Int )
 calculatePossibleBoards bag =
     let
         area =
-            4 * List.foldl (+) 0 [ bag.o, bag.i, bag.s, bag.z, bag.t, bag.j, bag.l ]
+            TetrominoBag.area bag
     in
     List.foldl
         (\candidate acc ->
@@ -88,7 +99,7 @@ viewInitializationSettings model =
                 )
                 Tetromino.allTetrominoes
             )
-        , button [ onClick StartClicked ] [ text "Solve!" ]
+        , button [ onClick SolveClicked ] [ text "Solve!" ]
         ]
 
 
@@ -129,11 +140,56 @@ update msg model =
             , Cmd.none
             )
 
-        StartClicked ->
-            ( { model | possibleBoards = Just (calculatePossibleBoards model.tileQuantities) }, Cmd.none )
+        SolveClicked ->
+            let
+                possibleBoards =
+                    calculatePossibleBoards model.tileQuantities
+            in
+            case possibleBoards of
+                [] ->
+                    Debug.log "no possible boards" ( model, Cmd.none )
+
+                x :: xs ->
+                    Debug.log "set up some boards"
+                        ( { model
+                            | solver =
+                                Just
+                                    { unsolvedBoards =
+                                        List.map
+                                            (\element ->
+                                                { width = Tuple.first element
+                                                , height = Tuple.second element
+                                                , placements = []
+                                                }
+                                            )
+                                            xs
+                                    , activeBoard =
+                                        Just
+                                            { width = Tuple.first x
+                                            , height = Tuple.second x
+                                            , placements = []
+                                            }
+                                    , solvedBoards = []
+                                    , failedBoards = []
+                                    , bag = model.tileQuantities
+                                    }
+                            , appState = Solving
+                          }
+                        , Delay.after 500 Delay.Millisecond Tick
+                        )
 
         Tick ->
-            ( model, Cmd.none )
+            case model.appState of
+                Solving ->
+                    case model.solver of
+                        Just solver ->
+                            ( { model | solver = Just (Debug.log "tick!" (Solver.solve solver)) }, Delay.after 500 Delay.Millisecond Tick )
+
+                        _ ->
+                            ( { model | appState = InitialConfiguration }, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
 
 
 main : Program () Model Msg
