@@ -29,4 +29,4 @@ overlaps placements candidate =
                 (\candidateSquare -> List.member candidateSquare usedSquares)
                 candidateSquares
     in
-    List.all (\b -> b == False) overlapChecks
+    List.any (\b -> b == True) overlapChecks
