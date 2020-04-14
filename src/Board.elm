@@ -91,5 +91,28 @@ firstEmptySquare board =
             ( 0, 0 )
 
         xs ->
-            -- TODO: Actually find and return a blank coordinate
-            ( 5, 0 )
+            findFirstEmptySquare coordinates board.width board.height 0 0
+
+
+findFirstEmptySquare : List Coordinate -> Int -> Int -> Int -> Int -> Coordinate
+findFirstEmptySquare used w h x y =
+    if List.member ( x, y ) used then
+        let
+            newX =
+                if x + 1 < w then
+                    x + 1
+
+                else
+                    0
+
+            newY =
+                if newX == 0 then
+                    y + 1
+
+                else
+                    y
+        in
+        findFirstEmptySquare used w h newX newY
+
+    else
+        ( x, y )
