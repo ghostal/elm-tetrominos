@@ -63,7 +63,7 @@ isSolved board =
                     False
 
                 False ->
-                    not (Placement.overlaps xs x)
+                    not (Placement.overlaps xs x) && not (outOfBounds x board)
 
 
 isLatestPlacementValid : Board -> Bool
@@ -73,7 +73,7 @@ isLatestPlacementValid board =
             True
 
         x :: xs ->
-            Placement.overlaps xs x
+            not (Placement.overlaps xs x) && not (outOfBounds x board)
 
 
 firstEmptySquare : Board -> Coordinate
@@ -116,3 +116,8 @@ findFirstEmptySquare used w h x y =
 
     else
         ( x, y )
+
+
+outOfBounds : Placement -> Board -> Bool
+outOfBounds placement board =
+    False
