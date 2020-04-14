@@ -71,19 +71,19 @@ resetScreen board =
 
 canvasWidth : Board -> Int
 canvasWidth board =
-    (board.width * round squareSize) + gutterSize
+    (board.width * round squareSize) + gutterSize * 2
 
 
 canvasHeight : Board -> Int
 canvasHeight board =
-    (board.height * round squareSize) + gutterSize
+    (board.height * round squareSize) + gutterSize * 2
 
 
 gutterSize : Int
 gutterSize =
-    20
+    50
 
 
 squareSize : Float
 squareSize =
-    10
+    20
