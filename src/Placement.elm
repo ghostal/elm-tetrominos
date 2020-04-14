@@ -14,5 +14,19 @@ type alias Placement =
 
 overlaps : List Placement -> Placement -> Bool
 overlaps placements candidate =
-    -- TODO: Implement a real version of this method
-    True
+    let
+        usedSquares =
+            placements
+                |> List.map (\p -> p.placement)
+                |> List.map TetrominoMap.getSquares
+                |> List.concat
+
+        candidateSquares =
+            TetrominoMap.getSquares candidate.placement
+
+        overlapChecks =
+            List.map
+                (\candidateSquare -> List.member candidateSquare usedSquares)
+                candidateSquares
+    in
+    List.all (\b -> b == False) overlapChecks
