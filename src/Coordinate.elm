@@ -1,4 +1,6 @@
-module Coordinate exposing (Coordinate, chooseLowestThenLeftmostCoordinate)
+module Coordinate exposing (Coordinate, chooseLowestThenLeftmostCoordinate, toPoint)
+
+import Canvas exposing (Point)
 
 
 type alias Coordinate =
@@ -25,3 +27,10 @@ chooseLowestThenLeftmostCoordinate a b =
                 EQ ->
                     -- TODO: This is a hack - this should never be reached
                     a
+
+
+toPoint : Coordinate -> Point
+toPoint coordinate =
+    ( toFloat (Tuple.first coordinate)
+    , toFloat (Tuple.second coordinate)
+    )

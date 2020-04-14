@@ -1,6 +1,7 @@
 module Tetrominos exposing (Model, Msg, main)
 
 import Board exposing (Board)
+import BoardRenderer
 import Browser
 import Debug
 import Delay
@@ -76,12 +77,12 @@ calculatePossibleBoards bag =
 
 view : Model -> Html Msg
 view model =
-    case model.possibleBoards of
+    case model.solver of
         Nothing ->
             viewInitializationSettings model
 
-        Just possibleBoards ->
-            viewPossibleBoards model possibleBoards
+        Just solver ->
+            viewSolver solver
 
 
 viewInitializationSettings : Model -> Html Msg
@@ -101,6 +102,16 @@ viewInitializationSettings model =
             )
         , button [ onClick SolveClicked ] [ text "Solve!" ]
         ]
+
+
+viewSolver : Solver -> Html Msg
+viewSolver solver =
+    case solver.activeBoard of
+        Nothing ->
+            div [] []
+
+        Just activeBoard ->
+            BoardRenderer.render activeBoard
 
 
 viewPossibleBoards : Model -> List ( Int, Int ) -> Html Msg
@@ -183,7 +194,7 @@ update msg model =
                 Solving ->
                     case model.solver of
                         Just solver ->
-                            ( { model | solver = Just (Debug.log "tick!" (Solver.solve solver)) }, Delay.after 500 Delay.Millisecond Tick )
+                            ( { model | solver = Just (Solver.solve solver) }, Delay.after 500 Delay.Millisecond Tick )
 
                         _ ->
                             ( { model | appState = InitialConfiguration }, Cmd.none )

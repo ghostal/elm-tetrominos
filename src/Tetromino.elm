@@ -1,5 +1,6 @@
-module Tetromino exposing (Tetromino(..), allTetrominoes, getRotationOptions, getTetrominoMap, getTetrominoName)
+module Tetromino exposing (Tetromino(..), allTetrominoes, getRotationOptions, getTetrominoColor, getTetrominoMap, getTetrominoName)
 
+import Color exposing (Color)
 import TetrominoMap exposing (TetrominoMap)
 
 
@@ -48,6 +49,31 @@ getTetrominoName tetromino =
 
         ZTetromino ->
             "Z"
+
+
+getTetrominoColor : Tetromino -> Color
+getTetrominoColor tetromino =
+    case tetromino of
+        ITetromino ->
+            Color.rgb255 0 193 251
+
+        OTetromino ->
+            Color.rgb255 249 248 113
+
+        TTetromino ->
+            Color.rgb255 189 147 249
+
+        JTetromino ->
+            Color.rgb255 100 150 247
+
+        LTetromino ->
+            Color.rgb255 255 174 134
+
+        STetromino ->
+            Color.rgb255 0 117 91
+
+        ZTetromino ->
+            Color.rgb255 194 78 57
 
 
 getTetrominoMap : Tetromino -> TetrominoMap
