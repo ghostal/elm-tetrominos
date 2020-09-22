@@ -120,4 +120,16 @@ findFirstEmptySquare used w h x y =
 
 outOfBounds : Placement -> Board -> Bool
 outOfBounds placement board =
-    False
+    TetrominoMap.getSquares placement.placement
+        |> List.map
+            (\square ->
+                let
+                    x =
+                        Tuple.first square
+
+                    y =
+                        Tuple.second square
+                in
+                x < 0 || y < 0 || x >= board.width || y >= board.height
+            )
+        |> List.any (\result -> result == True)
