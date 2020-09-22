@@ -1,6 +1,7 @@
 module Solver exposing (Solver, solve)
 
 import Board exposing (Board)
+import CustomList
 import Tetromino exposing (getRotationOptions)
 import TetrominoBag exposing (TetrominoBag)
 import TetrominoMap
@@ -71,8 +72,117 @@ solve solver =
                                 }
 
             else
-                -- TODO: Invalid latest placement - so try the next rotation (or tetromino, if there's no more rotations)
-                solver
+                retryLatestPlacement solver
+
+
+retryLatestPlacement : Solver -> Solver
+retryLatestPlacement solver =
+    -- TODO: Invalid latest placement - so try the next rotation (or tetromino, if there's no more rotations)
+    case solver.activeBoard of
+        Nothing ->
+            solver
+
+        Just board ->
+            case List.reverse board.placements of
+                [] ->
+                    failActiveBoard solver
+
+                -- TODO: Pop the latest placement from the end of the list
+                x :: reversedRemainingPlacements ->
+                    let
+                        -- TODO: See if there are other rotations after the current one
+                        rotations =
+                            Tetromino.getRotationOptions x.tetromino
+
+                        nextRotation =
+                            CustomList.firstAfter rotations (Just (TetrominoMap.normalize x.placement))
+
+                        remainingPlacements =
+                            List.reverse reversedRemainingPlacements
+                    in
+                    case nextRotation of
+                        Nothing ->
+                            -- TODO: If not, get the next tetromino
+                            let
+                                maybeNextTetromino =
+                                    TetrominoBag.firstAfter
+                                        solver.bag
+                                        (Just x.tetromino)
+                                        (Board.getPlacedTetrominoBag board)
+
+                                nextTetrominoRotations =
+                                    case maybeNextTetromino of
+                                        Nothing ->
+                                            []
+
+                                        Just tetromino ->
+                                            getRotationOptions tetromino
+
+                                maybeNextTetrominoNextRotation =
+                                    List.head nextTetrominoRotations
+                            in
+                            case maybeNextTetromino of
+                                Nothing ->
+                                    -- TODO: If no remaining tetromino... call this method again.
+                                    let
+                                        amendedSolver =
+                                            { solver
+                                                | activeBoard =
+                                                    Just
+                                                        { board
+                                                            | placements = remainingPlacements
+                                                        }
+                                            }
+                                    in
+                                    retryLatestPlacement amendedSolver
+
+                                Just nextTetromino ->
+                                    case maybeNextTetrominoNextRotation of
+                                        Just map ->
+                                            { solver
+                                                | activeBoard =
+                                                    Just
+                                                        { board
+                                                            | placements =
+                                                                List.append
+                                                                    remainingPlacements
+                                                                    [ { placement = TetrominoMap.translate x.placementSquare map
+                                                                      , placementSquare = x.placementSquare
+                                                                      , tetromino = nextTetromino
+                                                                      }
+                                                                    ]
+                                                        }
+                                            }
+
+                                        Nothing ->
+                                            -- TODO: If no remaining tetromino... call this method again.
+                                            let
+                                                amendedSolver =
+                                                    { solver
+                                                        | activeBoard =
+                                                            Just
+                                                                { board
+                                                                    | placements = remainingPlacements
+                                                                }
+                                                    }
+                                            in
+                                            retryLatestPlacement amendedSolver
+
+                        Just map ->
+                            { solver
+                                | activeBoard =
+                                    Just
+                                        { board
+                                            | placements =
+                                                List.append
+                                                    remainingPlacements
+                                                    [ { placement = TetrominoMap.translate x.placementSquare map
+                                                      , placementSquare = x.placementSquare
+                                                      , tetromino = x.tetromino
+                                                      }
+                                                    ]
+                                        }
+                            }
 
 
 activateNextBoard : Solver -> Solver

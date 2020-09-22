@@ -1,4 +1,4 @@
-module TetrominoMap exposing (TetrominoMap, buildRotationOptions, getSquares, translate)
+module TetrominoMap exposing (TetrominoMap, buildRotationOptions, getSquares, normalize, translate)
 
 import Coordinate exposing (Coordinate)
 
