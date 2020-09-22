@@ -16,13 +16,13 @@ type Tetromino
 
 allTetrominoes : List Tetromino
 allTetrominoes =
-    [ ITetromino
-    , OTetromino
+    [ OTetromino
     , TTetromino
     , JTetromino
-    , LTetromino
     , STetromino
     , ZTetromino
+    , LTetromino
+    , ITetromino
     ]
 
 
