@@ -13,25 +13,34 @@ import TetrominoMap exposing (TetrominoMap)
 
 render : Board -> Html a
 render board =
-    Canvas.toHtml
-        ( canvasWidth board, canvasHeight board )
-        []
-        (List.concat
-            [ [ resetScreen board ]
-            , [ renderGrid board ]
-            , List.concatMap
-                (\placement ->
-                    [ shapes
-                        [ fill (Tetromino.getTetrominoBorderColor placement.tetromino) ]
-                        (renderMap board placement.placement)
-                    , shapes
-                        [ fill (Tetromino.getTetrominoColor placement.tetromino) ]
-                        (renderMapInner board placement.placement)
-                    ]
+    div []
+        [ Canvas.toHtml
+            ( canvasWidth board, canvasHeight board )
+            []
+            (List.concat
+                [ [ resetScreen board ]
+                , [ renderGrid board ]
+                , List.concatMap
+                    (\placement ->
+                        [ shapes
+                            [ fill (Tetromino.getTetrominoBorderColor placement.tetromino) ]
+                            (renderMap board placement.placement)
+                        , shapes
+                            [ fill (Tetromino.getTetrominoColor placement.tetromino) ]
+                            (renderMapInner board placement.placement)
+                        ]
+                    )
+                    board.placements
+                ]
+            )
+        , p []
+            [ text
+                (String.fromInt board.width
+                    ++ " x "
+                    ++ String.fromInt board.height
                 )
-                board.placements
             ]
-        )
+        ]
 
 
 renderGrid : Board -> Renderable
