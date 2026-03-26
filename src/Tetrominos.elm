@@ -39,13 +39,13 @@ initialModel : Model
 initialModel =
     let
         bag =
-            { o = 0
-            , i = 0
-            , s = 0
-            , z = 0
+            { o = 2
+            , i = 2
+            , s = 1
+            , z = 1
             , t = 0
-            , j = 0
-            , l = 0
+            , j = 2
+            , l = 2
             }
     in
     { appState = InitialConfiguration
