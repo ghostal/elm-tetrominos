@@ -106,12 +106,20 @@ viewInitializationSettings model =
 
 viewSolver : Solver -> Html Msg
 viewSolver solver =
-    case solver.activeBoard of
-        Nothing ->
-            div [] []
+    div []
+        [ case solver.activeBoard of
+            Nothing ->
+                div [] []
 
-        Just activeBoard ->
-            BoardRenderer.render activeBoard
+            Just activeBoard ->
+                BoardRenderer.render activeBoard
+        , h3 [] [ text "Solved Boards" ]
+        , if List.isEmpty solver.solvedBoards then
+            p [] [ text "No boards have been solved yet." ]
+
+          else
+            div [] (List.map BoardRenderer.render solver.solvedBoards)
+        ]
 
 
 viewPossibleBoards : Model -> List ( Int, Int ) -> Html Msg
