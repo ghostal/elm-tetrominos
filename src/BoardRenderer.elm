@@ -18,11 +18,15 @@ render board =
         []
         (List.concat
             [ [ resetScreen board ]
-            , List.map
+            , List.concatMap
                 (\placement ->
-                    shapes
-                        [ fill (Tetromino.getTetrominoColor placement.tetromino) ]
+                    [ shapes
+                        [ fill (Tetromino.getTetrominoBorderColor placement.tetromino) ]
                         (renderMap board placement.placement)
+                    , shapes
+                        [ fill (Tetromino.getTetrominoColor placement.tetromino) ]
+                        (renderMapInner board placement.placement)
+                    ]
                 )
                 board.placements
             ]
@@ -31,6 +35,26 @@ render board =
 
 renderMap : Board -> TetrominoMap -> List Shape
 renderMap board map =
+    List.map
+        (\square -> rect (Coordinate.toPoint square) squareSize squareSize)
+        (squareCoordinates board map)
+
+
+renderMapInner : Board -> TetrominoMap -> List Shape
+renderMapInner board map =
+    List.map
+        (\square ->
+            let
+                ( x, y ) =
+                    Coordinate.toPoint square
+            in
+            rect ( x + borderSize, y + borderSize ) (squareSize - borderSize * 2) (squareSize - borderSize * 2)
+        )
+        (squareCoordinates board map)
+
+
+squareCoordinates : Board -> TetrominoMap -> List Coordinate.Coordinate
+squareCoordinates board map =
     let
         renderedOrigin =
             ( gutterSize
@@ -40,21 +64,15 @@ renderMap board map =
         scale =
             \x -> x * round squareSize
 
-        translate =
+        translateCoord =
             \c ->
                 ( Tuple.first c + gutterSize
                 , Tuple.second c * -1 + Tuple.second renderedOrigin
                 )
-
-        squares =
-            [ map.a, map.b, map.c, map.d ]
-                |> List.map
-                    (\coordinate -> Tuple.mapBoth scale scale coordinate)
-                |> List.map translate
     in
-    List.map
-        (\square -> rect (Coordinate.toPoint square) squareSize squareSize)
-        squares
+    [ map.a, map.b, map.c, map.d ]
+        |> List.map (\coordinate -> Tuple.mapBoth scale scale coordinate)
+        |> List.map translateCoord
 
 
 resetScreen : Board -> Renderable
@@ -87,3 +105,8 @@ gutterSize =
 squareSize : Float
 squareSize =
     20
+
+
+borderSize : Float
+borderSize =
+    1
