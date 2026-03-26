@@ -24,12 +24,14 @@ type alias Model =
     , tileQuantities : TetrominoBag
     , possibleBoards : Maybe (List ( Int, Int ))
     , solver : Maybe Solver
+    , tickTime : Int
     }
 
 
 type Msg
     = Tick
     | ChangedTetrominoCount Tetromino String
+    | ChangedTickTime String
     | SolveClicked
 
 
@@ -51,6 +53,7 @@ initialModel =
         bag
     , possibleBoards = Nothing
     , solver = Nothing
+    , tickTime = 100
     }
 
 
@@ -99,6 +102,13 @@ viewInitializationSettings model =
                         ]
                 )
                 Tetromino.allTetrominoes
+                ++ [ tr []
+                        [ td [] [ text "Tick time (ms)" ]
+                        , td []
+                            [ input [ onInput ChangedTickTime, value (String.fromInt model.tickTime) ] []
+                            ]
+                        ]
+                   ]
             )
         , button [ onClick SolveClicked ] [ text "Solve!" ]
         ]
@@ -159,6 +169,19 @@ update msg model =
             , Cmd.none
             )
 
+        ChangedTickTime value ->
+            ( { model
+                | tickTime =
+                    case String.toInt value of
+                        Just int ->
+                            int
+
+                        Nothing ->
+                            model.tickTime
+              }
+            , Cmd.none
+            )
+
         SolveClicked ->
             let
                 possibleBoards =
@@ -194,7 +217,7 @@ update msg model =
                                     }
                             , appState = Solving
                           }
-                        , Delay.after 500 Delay.Millisecond Tick
+                        , delay model.tickTime
                         )
 
         Tick ->
@@ -202,13 +225,18 @@ update msg model =
                 Solving ->
                     case model.solver of
                         Just solver ->
-                            ( { model | solver = Just (Solver.solve solver) }, Delay.after 100 Delay.Millisecond Tick )
+                            ( { model | solver = Just (Solver.solve solver) }, delay model.tickTime )
 
                         _ ->
                             ( { model | appState = InitialConfiguration }, Cmd.none )
 
                 _ ->
                     ( model, Cmd.none )
+
+
+delay : Int -> Cmd Msg
+delay time =
+    Delay.after ( toFloat time ) Delay.Millisecond Tick
 
 
 main : Program () Model Msg
