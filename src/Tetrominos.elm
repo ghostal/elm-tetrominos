@@ -194,7 +194,7 @@ update msg model =
                 Solving ->
                     case model.solver of
                         Just solver ->
-                            ( { model | solver = Just (Solver.solve solver) }, Delay.after 500 Delay.Millisecond Tick )
+                            ( { model | solver = Just (Solver.solve solver) }, Delay.after 100 Delay.Millisecond Tick )
 
                         _ ->
                             ( { model | appState = InitialConfiguration }, Cmd.none )
