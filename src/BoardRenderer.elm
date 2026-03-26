@@ -18,6 +18,7 @@ render board =
         []
         (List.concat
             [ [ resetScreen board ]
+            , [ renderGrid board ]
             , List.concatMap
                 (\placement ->
                     [ shapes
@@ -30,6 +31,31 @@ render board =
                 )
                 board.placements
             ]
+        )
+
+
+renderGrid : Board -> Renderable
+renderGrid board =
+    let
+        cells =
+            List.concatMap
+                (\col -> List.map (\row -> ( col, row )) (List.range 0 (board.height - 1)))
+                (List.range 0 (board.width - 1))
+    in
+    shapes
+        [ fill (Color.rgb255 238 238 238) ]
+        (List.map
+            (\( col, row ) ->
+                let
+                    x =
+                        toFloat (col * round squareSize + gutterSize) + borderSize
+
+                    y =
+                        toFloat (-(row * round squareSize) + board.height * round squareSize) + borderSize
+                in
+                rect ( x, y ) (squareSize - borderSize * 2) (squareSize - borderSize * 2)
+            )
+            cells
         )
 
 
